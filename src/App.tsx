@@ -185,7 +185,10 @@ export default function App() {
         />
 
         {/* Section 7: Frequently Asked Questions, Cal.com Meeting Card & Chat Bot Assistant */}
-        <FaqSection onOpenMeeting={() => setIsMeetingModalOpen(true)} />
+        <FaqSection
+          onOpenMeeting={() => setIsMeetingModalOpen(true)}
+          onOpenCreate={() => setIsCreateModalOpen(true)}
+        />
       </main>
 
       {/* Footer with Educational Clarification and Official Links */}
@@ -195,7 +198,10 @@ export default function App() {
       />
 
       {/* Floating Action Dock: Perguntar ao Bot & Marcar Reunião (Cal.com) */}
-      <FloatingChatBot onOpenMeeting={() => setIsMeetingModalOpen(true)} />
+      <FloatingChatBot
+        onOpenMeeting={() => setIsMeetingModalOpen(true)}
+        onOpenCreate={() => setIsCreateModalOpen(true)}
+      />
 
       {/* Section 6 & Compliance: Sticky Cookie Consent Banner */}
       <CookieBanner />

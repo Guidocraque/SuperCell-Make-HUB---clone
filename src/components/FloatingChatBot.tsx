@@ -4,9 +4,10 @@ import { ChatBot } from './ChatBot';
 
 interface FloatingChatBotProps {
   onOpenMeeting: () => void;
+  onOpenCreate?: () => void;
 }
 
-export const FloatingChatBot: React.FC<FloatingChatBotProps> = ({ onOpenMeeting }) => {
+export const FloatingChatBot: React.FC<FloatingChatBotProps> = ({ onOpenMeeting, onOpenCreate }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -83,7 +84,7 @@ export const FloatingChatBot: React.FC<FloatingChatBotProps> = ({ onOpenMeeting 
 
             {/* ChatBot inside modal */}
             <div className="flex-1 h-full">
-              <ChatBot embedded={false} onOpenMeeting={onOpenMeeting} />
+              <ChatBot embedded={false} onOpenMeeting={onOpenMeeting} onOpenCreate={onOpenCreate} />
             </div>
           </div>
         </div>

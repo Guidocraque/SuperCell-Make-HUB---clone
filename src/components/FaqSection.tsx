@@ -5,9 +5,10 @@ import { ChatBot } from './ChatBot';
 
 interface FaqSectionProps {
   onOpenMeeting?: () => void;
+  onOpenCreate?: () => void;
 }
 
-export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenMeeting }) => {
+export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenMeeting, onOpenCreate }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
   const [searchQuery, setSearchQuery] = useState('');
   const [openFaqId, setOpenFaqId] = useState<string | null>(FAQ_ITEMS[0].id);
@@ -236,7 +237,7 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenMeeting }) => {
           </div>
 
           {/* Embedded ChatBot Component */}
-          <ChatBot embedded={true} onOpenMeeting={onOpenMeeting} />
+          <ChatBot embedded={true} onOpenMeeting={onOpenMeeting} onOpenCreate={onOpenCreate} />
         </div>
       </div>
     </section>

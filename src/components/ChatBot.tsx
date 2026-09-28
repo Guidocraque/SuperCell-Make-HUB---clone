@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles, RefreshCw, AlertCircle, ShieldCheck, Calendar as CalendarIcon, ExternalLink } from 'lucide-react';
+import { Send, Bot, User, Sparkles, RefreshCw, AlertCircle, ShieldCheck, Calendar as CalendarIcon, ExternalLink, Paintbrush } from 'lucide-react';
 import { SUGGESTED_QUESTIONS, answerFromLocalKnowledge } from '../data/faqData';
 
 export interface ChatMessage {
@@ -12,9 +12,10 @@ export interface ChatMessage {
 interface ChatBotProps {
   embedded?: boolean;
   onOpenMeeting?: () => void;
+  onOpenCreate?: () => void;
 }
 
-export const ChatBot: React.FC<ChatBotProps> = ({ embedded = false, onOpenMeeting }) => {
+export const ChatBot: React.FC<ChatBotProps> = ({ embedded = false, onOpenMeeting, onOpenCreate }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome',
@@ -234,6 +235,20 @@ export const ChatBot: React.FC<ChatBotProps> = ({ embedded = false, onOpenMeetin
                     <span>cal.com/guilherme_carapinha_real</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
+                </div>
+              )}
+
+              {/* Quick action if message discusses skin submission / buttons / approval */}
+              {msg.sender === 'bot' && (msg.text.includes('Submeter Skin') || msg.text.includes('aprovação') || msg.text.includes('botão') || msg.text.includes('submissão')) && onOpenCreate && (
+                <div className="mt-3 pt-2.5 border-t border-gray-700/60 flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={onOpenCreate}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md cursor-pointer transition font-display"
+                  >
+                    <Paintbrush className="w-3.5 h-3.5" />
+                    <span>Abrir "Submeter Skin"</span>
+                  </button>
                 </div>
               )}
 
