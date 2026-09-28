@@ -8,6 +8,7 @@ dotenv.config();
 
 const app = express();
 const PORT = 3000;
+const CLOUD_PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : null;
 
 app.use(express.json());
 
@@ -140,6 +141,12 @@ async function startServer() {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Supercell Make server running on http://0.0.0.0:${PORT}`);
   });
+
+  if (CLOUD_PORT && CLOUD_PORT !== PORT) {
+    app.listen(CLOUD_PORT, '0.0.0.0', () => {
+      console.log(`Supercell Make server also listening on Cloud Run port ${CLOUD_PORT}`);
+    });
+  }
 }
 
 startServer();
