@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .font-display {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .font-body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+}
+
+.callout-gradient {
+  background: linear-gradient(180deg, #FF6079 0%, #FF7256 50%, #FF5A73 100%);
+}
+
+.brand-gradient {
+  background: linear-gradient(135deg, #FF4565 0%, #FFA043 100%);
+}
+
+.brand-purple-gradient {
+  background: linear-gradient(135deg, #7B42F6 0%, #4F46E5 100%);
+}
+
+.hero-radial-glow {
+  background: radial-gradient(circle at 85% 20%, rgba(123, 66, 246, 0.28) 0%, rgba(20, 18, 31, 0) 65%),
+              radial-gradient(circle at 15% 85%, rgba(255, 69, 101, 0.18) 0%, rgba(20, 18, 31, 0) 60%),
+              #1e1e24;
+}

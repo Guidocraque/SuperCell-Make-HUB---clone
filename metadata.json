@@ -1,0 +1,6 @@
+{
+  "name": "Supercell Make",
+  "description": "Create, vote and share custom skins and game creations with the Supercell Community.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
