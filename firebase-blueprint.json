@@ -1,0 +1,179 @@
+{
+  "entities": {
+    "CatalogoItem": {
+      "title": "Item do Catálogo",
+      "description": "Produto ou serviço disponibilizado no catálogo comercial do Supercell Make HUB.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador único do item no catálogo."
+        },
+        "nome": {
+          "type": "string",
+          "description": "Nome comercial do produto ou serviço."
+        },
+        "descricao": {
+          "type": "string",
+          "description": "Descrição detalhada do produto ou serviço."
+        },
+        "unidadeVenda": {
+          "type": "string",
+          "description": "Unidade de venda (unidade, hora ou pacote).",
+          "enum": ["unidade", "hora", "pacote"]
+        },
+        "precoCentimos": {
+          "type": "number",
+          "description": "Preço unitário em cêntimos de euro (EUR)."
+        },
+        "moeda": {
+          "type": "string",
+          "description": "Moeda de faturação (EUR).",
+          "enum": ["EUR"]
+        },
+        "ativo": {
+          "type": "boolean",
+          "description": "Estado de ativação do item no catálogo."
+        },
+        "condicoes": {
+          "type": "string",
+          "description": "Condições, âmbito ou limitações relevantes."
+        },
+        "isDemonstracao": {
+          "type": "boolean",
+          "description": "Indicação de produto/preço com valor de demonstração didática."
+        }
+      },
+      "required": ["id", "nome", "descricao", "unidadeVenda", "precoCentimos", "moeda", "ativo"]
+    },
+    "Pedido": {
+      "title": "Pedido de Proposta",
+      "description": "Registo de solicitação de proposta submetido pelo formulário da landing page.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador do pedido."
+        },
+        "nome": {
+          "type": "string",
+          "description": "Nome do potencial cliente."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email de contacto do cliente (armazenado apenas para contacto comercial)."
+        },
+        "textoOriginal": {
+          "type": "string",
+          "description": "Texto original do pedido introduzido pelo utilizador."
+        },
+        "dataCriacao": {
+          "type": "string",
+          "description": "Data ISO de submissão do pedido."
+        },
+        "dataAtualizacao": {
+          "type": "string",
+          "description": "Data ISO da última atualização do pedido."
+        },
+        "estado": {
+          "type": "string",
+          "description": "Estado de processamento do pedido.",
+          "enum": ["Recebido", "Em análise", "Necessita de revisão", "Proposta criada", "Erro"]
+        },
+        "interpretacao": {
+          "type": "string",
+          "description": "Interpretação estruturada gerada pelo modelo Gemini (JSON serializado ou objeto)."
+        },
+        "informacaoEmFalta": {
+          "type": "string",
+          "description": "Lista de questões pendentes ou informações em falta."
+        },
+        "motivoRevisao": {
+          "type": "string",
+          "description": "Motivo pelo qual o pedido foi encaminhado para revisão humana."
+        },
+        "propostaId": {
+          "type": "string",
+          "description": "Identificador da proposta gerada associada, se aplicável."
+        },
+        "erroProcessamento": {
+          "type": "string",
+          "description": "Descrição do eventual erro técnico ocorrido durante o processamento."
+        }
+      },
+      "required": ["id", "nome", "email", "textoOriginal", "dataCriacao", "dataAtualizacao", "estado"]
+    },
+    "Proposta": {
+      "title": "Proposta Comercial",
+      "description": "Proposta orçamental calculada pelo backend com base no catálogo.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador único da proposta."
+        },
+        "numeroProposta": {
+          "type": "string",
+          "description": "Número formal sequencial ou codificado da proposta (ex: PROP-2026-001)."
+        },
+        "pedidoId": {
+          "type": "string",
+          "description": "Referência ao identificador do pedido de origem."
+        },
+        "dataCriacao": {
+          "type": "string",
+          "description": "Data de emissão da proposta."
+        },
+        "dataValidade": {
+          "type": "string",
+          "description": "Data limite de validade da proposta (15 dias por defeito)."
+        },
+        "resumoAmbito": {
+          "type": "string",
+          "description": "Resumo sintético do âmbito dos serviços orçamentados."
+        },
+        "totalCentimos": {
+          "type": "number",
+          "description": "Valor total líquido da proposta em cêntimos de euro (sem IVA)."
+        },
+        "condicoes": {
+          "type": "string",
+          "description": "Condições gerais de entrega, validade e execução."
+        },
+        "token": {
+          "type": "string",
+          "description": "Token criptográfico seguro e não previsível para acesso à proposta."
+        },
+        "linkAcesso": {
+          "type": "string",
+          "description": "Link público ou caminho de acesso à proposta individual."
+        },
+        "isDemonstracao": {
+          "type": "boolean",
+          "description": "Sinalização de proposta didática de demonstração com preços fictícios."
+        }
+      },
+      "required": ["id", "numeroProposta", "pedidoId", "dataCriacao", "dataValidade", "totalCentimos", "token"]
+    }
+  },
+  "firestore": {
+    "/catalogo/{itemId}": {
+      "schema": {
+        "$ref": "#/entities/CatalogoItem"
+      },
+      "description": "Catálogo comercial de produtos e serviços para cálculo de propostas."
+    },
+    "/pedidos/{pedidoId}": {
+      "schema": {
+        "$ref": "#/entities/Pedido"
+      },
+      "description": "Pedidos de proposta submetidos pelos utilizadores."
+    },
+    "/propostas/{propostaId}": {
+      "schema": {
+        "$ref": "#/entities/Proposta"
+      },
+      "description": "Propostas orçamentais calculadas a partir de pedidos e itens do catálogo."
+    }
+  }
+}

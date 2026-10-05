@@ -114,6 +114,32 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
 
           <button
             onClick={() => {
+              onSelectNav('proposta');
+              onClose();
+            }}
+            className="w-full text-left px-3 py-2.5 rounded-xl font-bold text-indigo-300 hover:bg-white/10 text-sm flex items-center justify-between"
+          >
+            <span>Pedir Proposta</span>
+            <span className="text-[10px] bg-indigo-500/20 text-indigo-300 font-bold px-2 py-0.5 rounded-full">
+              Orçamento IA
+            </span>
+          </button>
+
+          <button
+            onClick={() => {
+              onSelectNav('admin');
+              onClose();
+            }}
+            className="w-full text-left px-3 py-2.5 rounded-xl font-bold text-purple-300 hover:bg-white/10 text-sm flex items-center justify-between"
+          >
+            <span>Área de Administração</span>
+            <span className="text-[10px] bg-purple-500/20 text-purple-300 font-bold px-2 py-0.5 rounded-full">
+              Privado
+            </span>
+          </button>
+
+          <button
+            onClick={() => {
               onClose();
               onOpenMeeting();
             }}

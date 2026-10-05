@@ -101,10 +101,26 @@ export const Footer: React.FC<FooterProps> = ({ onSelectNav, onOpenGuide }) => {
               </li>
               <li>
                 <button
+                  onClick={() => onSelectNav('proposta')}
+                  className="hover:text-indigo-400 text-indigo-300 font-semibold transition-colors cursor-pointer"
+                >
+                  Pedir Proposta (IA)
+                </button>
+              </li>
+              <li>
+                <button
                   onClick={() => onSelectNav('help')}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
                   FAQ &amp; Chatbot
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectNav('admin')}
+                  className="hover:text-purple-400 text-purple-300 font-semibold transition-colors cursor-pointer"
+                >
+                  Painel de Administração
                 </button>
               </li>
             </ul>

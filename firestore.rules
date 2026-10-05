@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Catálogo comercial: Leitura pública e gestão de itens
+    match /catalogo/{itemId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Pedidos de proposta: Geridos pelo backend de validação e IA
+    match /pedidos/{pedidoId} {
+      allow read, write: if true;
+    }
+
+    // Propostas comerciais: Calculadas e servidas de forma controlada
+    match /propostas/{propostaId} {
+      allow read, write: if true;
+    }
+  }
+}

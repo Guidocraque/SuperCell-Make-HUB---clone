@@ -6,6 +6,9 @@ import { HeroSection } from './components/HeroSection';
 import { ExploreSection } from './components/ExploreSection';
 import { CampaignsSection } from './components/CampaignsSection';
 import { CreationCalloutSection } from './components/CreationCalloutSection';
+import { PedidoPropostaSection } from './components/PedidoPropostaSection';
+import { ProposalView } from './components/ProposalView';
+import { AdminView } from './components/AdminView';
 import { CookieBanner } from './components/CookieBanner';
 import { Footer } from './components/Footer';
 import { LoginModal } from './components/LoginModal';
@@ -20,7 +23,87 @@ import { ScheduleMeetingModal } from './components/ScheduleMeetingModal';
 import { INITIAL_CAMPAIGNS, INITIAL_CREATIONS } from './data/mockData';
 import { Creation, Campaign, SupercellUser } from './types';
 
+// Função de parse seguro de rotas suportando pathname, search query (?proposta=...) e hash (#proposta/...)
+function parseCurrentRoute(): { path: 'home' | 'admin' | 'proposta'; token?: string } {
+  const p = window.location.pathname || '';
+  const search = new URLSearchParams(window.location.search || '');
+  const hash = window.location.hash || '';
+
+  // 1. Proposta via Search Query (?proposta=TOKEN ou ?token=TOKEN) — Prioridade máxima
+  const qToken = search.get('proposta') || search.get('token');
+  if (qToken && qToken.trim() !== '') {
+    return { path: 'proposta', token: qToken.trim().replace(/^#+/, '').replace(/^\/+/, '').replace(/\/+$/, '') };
+  }
+
+  // 2. Proposta via Hash Router (#/proposta/TOKEN ou #proposta/TOKEN)
+  const hashMatch = hash.match(/#\/?proposta\/([a-zA-Z0-9_\-\.]+)/);
+  if (hashMatch && hashMatch[1]) {
+    return { path: 'proposta', token: hashMatch[1].trim().replace(/\/+$/, '') };
+  }
+
+  // 3. Proposta via Pathname tradicional: /proposta/TOKEN
+  const pathMatch = p.match(/^\/proposta\/([a-zA-Z0-9_\-\.]+)/);
+  if (pathMatch && pathMatch[1]) {
+    return { path: 'proposta', token: pathMatch[1].trim().replace(/\/+$/, '') };
+  }
+
+  // 4. Admin via Search (?view=admin ou ?admin=true)
+  if (search.get('view') === 'admin' || search.get('admin') === 'true') {
+    return { path: 'admin' };
+  }
+
+  // 5. Admin via Hash (#/admin ou #admin)
+  if (hash.startsWith('#/admin') || hash === '#admin') {
+    return { path: 'admin' };
+  }
+
+  // 6. Admin via Pathname (/admin)
+  if (p.startsWith('/admin')) {
+    return { path: 'admin' };
+  }
+
+  return { path: 'home' };
+}
+
 export default function App() {
+  const [route, setRoute] = useState<{ path: 'home' | 'admin' | 'proposta'; token?: string }>(() => parseCurrentRoute());
+
+  useEffect(() => {
+    const onLocationChange = () => {
+      setRoute(parseCurrentRoute());
+    };
+    window.addEventListener('popstate', onLocationChange);
+    window.addEventListener('hashchange', onLocationChange);
+    return () => {
+      window.removeEventListener('popstate', onLocationChange);
+      window.removeEventListener('hashchange', onLocationChange);
+    };
+  }, []);
+
+  const navigateTo = (url: string) => {
+    try {
+      window.history.pushState({}, '', url);
+    } catch {
+      // Fallback para ambientes em que pushState pode ser restrito
+    }
+
+    // Atualização direta do estado sem depender exclusivamente do timing do window.location
+    if (url.startsWith('/proposta/')) {
+      const token = url.replace('/proposta/', '').trim().replace(/\/+$/, '');
+      setRoute({ path: 'proposta', token });
+      return;
+    }
+    if (url.startsWith('/admin')) {
+      setRoute({ path: 'admin' });
+      return;
+    }
+    if (url === '/' || url === '') {
+      setRoute({ path: 'home' });
+      return;
+    }
+    setRoute(parseCurrentRoute());
+  };
+
   const [creations, setCreations] = useState<Creation[]>(() => {
     const saved = localStorage.getItem('sc_make_creations');
     return saved ? JSON.parse(saved) : INITIAL_CREATIONS;
@@ -80,7 +163,6 @@ export default function App() {
         ? prev.filter((id) => id !== creationId)
         : [...prev, creationId];
 
-      // Update creation vote count in state
       setCreations((current) =>
         current.map((item) => {
           if (item.id === creationId) {
@@ -108,7 +190,6 @@ export default function App() {
 
   const handleCreateSkin = (newCreation: Creation) => {
     setCreations((prev) => [newCreation, ...prev]);
-    // Auto-select to view newly submitted skin
     setSelectedCreation(newCreation);
   };
 
@@ -118,6 +199,10 @@ export default function App() {
       document.getElementById('explore-heading')?.scrollIntoView({ behavior: 'smooth' });
     } else if (nav === 'campaigns') {
       document.getElementById('campaigns-heading')?.scrollIntoView({ behavior: 'smooth' });
+    } else if (nav === 'proposta') {
+      document.getElementById('pedido-proposta')?.scrollIntoView({ behavior: 'smooth' });
+    } else if (nav === 'admin') {
+      navigateTo('/admin');
     } else if (nav === 'create') {
       setIsCreateModalOpen(true);
     } else if (nav === 'help') {
@@ -127,6 +212,17 @@ export default function App() {
     }
   };
 
+  // Se a rota for a Área de Administração (/admin)
+  if (route.path === 'admin') {
+    return <AdminView onNavigate={navigateTo} onBackToHome={() => navigateTo('/')} />;
+  }
+
+  // Se a rota for uma Proposta Individual (/proposta/:token)
+  if (route.path === 'proposta' && route.token) {
+    return <ProposalView token={route.token} onBackToHome={() => navigateTo('/')} />;
+  }
+
+  // Rota padrão: Landing Page Completa
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans flex flex-col selection:bg-purple-500 selection:text-white">
       {/* Top Educational Disclaimer Banner with official Supercell hyperlink */}
@@ -183,6 +279,9 @@ export default function App() {
           onLearnMore={() => setIsGuideModalOpen(true)}
           onOpenCreate={() => setIsCreateModalOpen(true)}
         />
+
+        {/* Section Nova: Pedido de Proposta com IA (Integrada na Landing Page) */}
+        <PedidoPropostaSection />
 
         {/* Section 7: Frequently Asked Questions, Cal.com Meeting Card & Chat Bot Assistant */}
         <FaqSection
